@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SmartTaskAPI.Data;
+using SmartTaskAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<SmartTaskDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 var app = builder.Build();
 

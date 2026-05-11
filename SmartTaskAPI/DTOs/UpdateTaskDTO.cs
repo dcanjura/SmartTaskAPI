@@ -2,8 +2,8 @@
 {
     public record UpdateTaskDTO
     {
-        int Id { get; init; }
-        DateTime DueDate { get; init; }
-        string? Priority { get; init; }
+        public int Id { get; init; }
+        public DateTime DueDate { get; init; }
+        public string? Priority { get; init; }
     }
 }

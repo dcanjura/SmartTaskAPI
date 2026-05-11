@@ -2,9 +2,9 @@
 {
     public record CreateTaskDTO
     {
-        string Title { get; init; } = string.Empty;
-        string Description { get; init; } = string.Empty;
-        DateTime DueDate { get; init; }
-        string Priority { get; init; } = "Low";
+        public string Title { get; init; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
+        public DateTime DueDate { get; init; }
+        public string Priority { get; init; } = "Low";
     }
 }
