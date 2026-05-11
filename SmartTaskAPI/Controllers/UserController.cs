@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SmartTaskAPI.DTOs;
 using SmartTaskAPI.Services;
+using System.Security.Claims;
 
 namespace SmartTaskAPI.Controllers
 {
@@ -8,46 +8,40 @@ namespace SmartTaskAPI.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserService _service;
+        private readonly IUserService _service;
 
-        public UserController(UserService service)
+        //Obtener el ID del usuario actual a partir de los claims del token JWT
+        private int GetCurrentUserId()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            return int.Parse(userId!);
+        }
+
+        public UserController(IUserService service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public IActionResult GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
-            var users = _service.GetUsers();
+            var users = await _service.GetAllAsync();
+
             return Ok(users);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetUserById(int id)
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser()
         {
-            var user = _service.GetUserById(id);
-            return Ok(user);
-        }
+            var userId = GetCurrentUserId();
 
-        [HttpPost]
-        public IActionResult CreateUser([FromBody] UserDTO userDto)
-        {
-            var user = _service.CreateUser(userDto);
-            return Ok(user);
-        }
+            var user = await _service.GetByIdAsync(userId);
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, [FromBody] UserDTO userDto)
-        {
-            var user = _service.UpdateUser(id, userDto);
-            return Ok(user);
-        }
+            if (user == null)
+                return NotFound(new { message = "Usuario no encontrado" });
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteUser(int id)
-        {
-            _service.DeleteUser(id);
-            return Ok();
+            return Ok(user);
         }
     }
 }
