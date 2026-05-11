@@ -251,7 +251,9 @@ Authorize
 # Integrantes
 
 - Diego Enrique Arguera Canjura
-- Integrantes del grupo
+- Irvin Alejandro Arguera Canjura
+- Erick Alexander Sanchez Miranda
+- Sebastian Alejandro Solano Menjivar
 
 ---
 
