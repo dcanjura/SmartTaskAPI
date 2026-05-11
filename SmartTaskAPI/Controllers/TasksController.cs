@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SmartTaskAPI.DTOs;
 using SmartTaskAPI.Services;
+using System.Security.Claims;
 
 namespace SmartTaskAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
@@ -15,7 +18,13 @@ namespace SmartTaskAPI.Controllers
             _taskService = taskService;
         }
 
-        private int GetCurrentUserId() => 1;
+        //Obtener el ID del usuario actual a partir de los claims del token JWT
+        private int GetCurrentUserId()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            return int.Parse(userId!);
+        }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TaskResponseDTO>>> GetAll()

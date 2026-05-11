@@ -1,45 +1,71 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartTaskAPI.DTOs;
 using SmartTaskAPI.Services;
+using System.Security.Claims;
 
 namespace SmartTaskAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService _service;
+        private readonly IAuthService _service;
 
-        public AuthController(AuthService service)
+        public AuthController(IAuthService service)
         {
             _service = service;
         }
 
         [HttpPost("register")]
-        public IActionResult Register()
+        public async Task<IActionResult> Register(RegisterDTO dto)
         {
-            var result = _service.Register();
+            var result = await _service.RegisterAsync(
+                dto.FullName,
+                dto.Email,
+                dto.Password
+            );
+
+            if (result == null)
+                return BadRequest("User already exists");
+
             return Ok(result);
         }
 
         [HttpPost("login")]
-        public IActionResult Login()
+        public async Task<IActionResult> Login(LoginDTO dto)
         {
-            var result = _service.Login();
-            return Ok(result);
+            var token = await _service.LoginAsync(
+                dto.Email,
+                dto.Password
+            );
+
+            if (token == null)
+                return Unauthorized("Invalid credentials");
+
+            return Ok(new { token });
         }
 
         [HttpPost("refresh")]
-        public IActionResult RefreshToken()
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
         {
-            var result = _service.RefreshToken();
-            return Ok(result);
+            var token = await _service.RefreshTokenAsync(refreshToken);
+
+            if (token == null)
+                return Unauthorized("Invalid refresh token");
+
+            return Ok(new { token });
         }
 
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout([FromBody] string refreshToken)
         {
-            _service.Logout();
+            var result = await _service.RevokeTokenAsync(refreshToken);
+
+            if (!result)
+                return BadRequest("Invalid token");
+
             return Ok("Logout successful");
         }
     }
