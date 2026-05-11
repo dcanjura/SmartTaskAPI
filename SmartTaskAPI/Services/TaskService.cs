@@ -2,6 +2,7 @@
 using SmartTaskAPI.Data;
 using SmartTaskAPI.DTOs;
 using SmartTaskAPI.Models;
+using SmartTaskAPI.Helpers;
 
 namespace SmartTaskAPI.Services
 {
@@ -55,7 +56,7 @@ namespace SmartTaskAPI.Services
                 Title = dto.Title,
                 Description = dto.Description,
                 DueDate = dto.DueDate,
-                Priority = dto.Priority,
+                Priority = PriorityHelper.CalculatePriority(dto.DueDate),
                 UserId = userId,
                 IsCompleted = false,
                 CreatedAt = DateTime.UtcNow
@@ -83,7 +84,7 @@ namespace SmartTaskAPI.Services
             if (task == null) return null;
 
             task.DueDate = dto.DueDate;
-            if (dto.Priority != null) task.Priority = dto.Priority;
+            task.Priority = PriorityHelper.CalculatePriority(dto.DueDate);
 
             await _context.SaveChangesAsync();
 
