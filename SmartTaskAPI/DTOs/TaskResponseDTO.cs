@@ -6,7 +6,7 @@
         public string Title { get; init; } = string.Empty;
         public string Description { get; init; } = string.Empty;
         public bool IsCompleted { get; init; } = false;
-        public DateTime DueDate { get; init; } // Asegúrate de agregar esta si el servicio la pide
+        public DateTime DueDate { get; init; } 
         public string Priority { get; init; } = "Low";
     }
 }
