@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SmartTaskAPI.DTOs;
 using SmartTaskAPI.Services;
-using System.Security.Claims;
 
 namespace SmartTaskAPI.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
@@ -36,15 +33,15 @@ namespace SmartTaskAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDTO dto)
         {
-            var token = await _service.LoginAsync(
+            var result = await _service.LoginAsync(
                 dto.Email,
                 dto.Password
             );
 
-            if (token == null)
+            if (result == null)
                 return Unauthorized("Invalid credentials");
 
-            return Ok(new { token });
+            return Ok(new { result });
         }
 
         [HttpPost("refresh")]

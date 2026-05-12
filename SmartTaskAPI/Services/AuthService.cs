@@ -51,7 +51,7 @@ namespace SmartTaskAPI.Services
         }
 
         // Valida credenciales y retorna un JWT si son correctas
-        public async Task<string?> LoginAsync(string email, string password)
+        public async Task<AuthResponseDTO> LoginAsync(string email, string password)
         {
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);
@@ -73,7 +73,11 @@ namespace SmartTaskAPI.Services
             _context.RefreshTokens.Add(refreshToken);
             await _context.SaveChangesAsync();
 
-            return GenerateJwtToken(user);
+            return new AuthResponseDTO
+            {
+                Token = GenerateJwtToken(user),
+                RefreshToken = refreshToken.Token
+            };
         }
 
         // Renueva el JWT si el refresh token es válido y no ha expirado ni fue revocado

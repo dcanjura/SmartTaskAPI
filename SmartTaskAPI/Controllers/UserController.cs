@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SmartTaskAPI.Services;
 using System.Security.Claims;
 
 namespace SmartTaskAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -21,14 +23,6 @@ namespace SmartTaskAPI.Controllers
         public UserController(IUserService service)
         {
             _service = service;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetUsers()
-        {
-            var users = await _service.GetAllAsync();
-
-            return Ok(users);
         }
 
         [HttpGet("me")]
